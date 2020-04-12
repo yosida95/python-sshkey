@@ -43,7 +43,7 @@ class SSHPublicKey(metaclass=abc.ABCMeta):
         return ' '.join(parts)
 
     def to_ssh2(self):
-        rfc4617data = ['---- BEGIN SSH2 PUBLIC KEY ----']
+        rfc4716data = ['---- BEGIN SSH2 PUBLIC KEY ----']
 
         comment = '{}-bit {}'.format(
             self.length,
@@ -51,14 +51,14 @@ class SSHPublicKey(metaclass=abc.ABCMeta):
         if self.comment != '':
             comment += ', {}'.format(self.comment)
 
-        rfc4617data.append('Comment: "{}"'.format(comment))
+        rfc4716data.append('Comment: "{}"'.format(comment))
 
-        rfc4617data.extend(wrap(base64.b64encode(
+        rfc4716data.extend(wrap(base64.b64encode(
            self._to_openssh_content()).decode('ascii'), 70))
 
-        rfc4617data.append('---- END SSH2 PUBLIC KEY ----')
+        rfc4716data.append('---- END SSH2 PUBLIC KEY ----')
 
-        return '\n'.join(rfc4617data)
+        return '\n'.join(rfc4716data)
 
     def fingerprint(self):
         return hashlib.md5(self._to_openssh_content()).hexdigest()
