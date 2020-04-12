@@ -18,14 +18,13 @@ def _read(name):
 
 
 readme = _read("README.rst")
-license = _read("LICENSE")
 
 setup(
     name='sshkey',
-    version='0.0.1',
+    version='0.1.0',
     description='SSH key management utility',
     long_description=readme,
-    license=license,
+    license='BSD-3-Clause',
     url='https://github.com/yosida95/python-sshkey',
 
     author='Kohei YOSHIDA',
@@ -43,7 +42,7 @@ setup(
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3"
+        "Programming Language :: Python :: 3",
         "Topic :: Security",
         "Topic :: Software Development :: Libraries :: Python Modules",
     ],
