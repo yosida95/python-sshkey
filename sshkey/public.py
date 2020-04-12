@@ -6,6 +6,8 @@ import enum
 import hashlib
 import struct
 
+from textwrap import wrap
+
 
 class SSHKeyType(enum.Enum):
     RSA = 'ssh-rsa'
@@ -39,6 +41,24 @@ class SSHPublicKey(metaclass=abc.ABCMeta):
             parts.append(self.comment)
 
         return ' '.join(parts)
+
+    def to_ssh2(self):
+        rfc4617data = ['---- BEGIN SSH2 PUBLIC KEY ----']
+
+        comment = '{}-bit {}'.format(
+            self.length,
+            ''.join([i for i in self.type.name if not i.isdigit()]))
+        if self.comment != '':
+            comment += ', {}'.format(self.comment)
+
+        rfc4617data.append('Comment: "{}"'.format(comment))
+
+        rfc4617data.extend(wrap(base64.b64encode(
+           self._to_openssh_content()).decode('ascii'), 70))
+
+        rfc4617data.append('---- END SSH2 PUBLIC KEY ----')
+
+        return '\n'.join(rfc4617data)
 
     def fingerprint(self):
         return hashlib.md5(self._to_openssh_content()).hexdigest()
