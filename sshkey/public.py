@@ -24,15 +24,15 @@ class SSHPublicKey(metaclass=abc.ABCMeta):
 
     @abc.abstractproperty
     def type(self):
-        return None
+        return None  # pragma: no cover
 
     @abc.abstractproperty
     def length(self):
-        return 0
+        return 0  # pragma: no cover
 
     @abc.abstractmethod
     def _to_openssh_content(self):
-        return
+        return  # pragma: no cover
 
     def to_openssh(self):
         parts = [self.type.value,
