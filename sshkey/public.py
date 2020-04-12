@@ -51,9 +51,8 @@ class SSHPublicKey(metaclass=abc.ABCMeta):
 
         comment = f'{self.length}-bit {self._algorithm}'
         if self.comment != '':
-            comment += ', {}'.format(self.comment)
-
-        rfc4716data.append('Comment: "{}"'.format(comment))
+            comment += f', {self.comment}'
+        rfc4716data.append(f'Comment: "{comment}"')
 
         rfc4716data.extend(wrap(base64.b64encode(
            self._to_openssh_content()).decode('ascii'), 70))
@@ -235,7 +234,7 @@ class SSHECDSAPublicKey(SSHPublicKey):
 
     @property
     def type(self):
-        algorithm = 'ecdsa-sha2-{curve}'.format(curve=self.curve)
+        algorithm = f'ecdsa-sha2-{self.curve}'
         return SSHKeyType(algorithm)
 
     @property
