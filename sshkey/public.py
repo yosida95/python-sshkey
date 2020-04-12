@@ -23,6 +23,10 @@ class SSHPublicKey(metaclass=abc.ABCMeta):
         self.comment = comment
 
     @abc.abstractproperty
+    def _algorithm(self) -> str:
+        return ''  # pragma: no cover
+
+    @abc.abstractproperty
     def type(self):
         return None  # pragma: no cover
 
@@ -45,9 +49,7 @@ class SSHPublicKey(metaclass=abc.ABCMeta):
     def to_ssh2(self):
         rfc4716data = ['---- BEGIN SSH2 PUBLIC KEY ----']
 
-        comment = '{}-bit {}'.format(
-            self.length,
-            ''.join([i for i in self.type.name if not i.isdigit()]))
+        comment = f'{self.length}-bit {self._algorithm}'
         if self.comment != '':
             comment += ', {}'.format(self.comment)
 
@@ -75,6 +77,10 @@ class SSHRSAPublicKey(SSHPublicKey):
 
         self.exponent = exponent
         self.modulus = modulus
+
+    @property
+    def _algorithm(self):
+        return 'RSA'
 
     @property
     def type(self):
@@ -141,6 +147,10 @@ class SSHDSAPublicKey(SSHPublicKey):
         self.q = q
         self.g = g
         self.y = y
+
+    @property
+    def _algorithm(self):
+        return 'DSA'
 
     @property
     def type(self):
@@ -218,6 +228,10 @@ class SSHECDSAPublicKey(SSHPublicKey):
         super().__init__(comment)
         self.curve = curve
         self.public_b = public_b
+
+    @property
+    def _algorithm(self):
+        return 'ECDSA'
 
     @property
     def type(self):
