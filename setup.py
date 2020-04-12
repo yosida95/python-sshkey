@@ -29,7 +29,7 @@ setup(
     url='https://github.com/yosida95/python-sshkey',
 
     author='Kohei YOSHIDA',
-    author_email='license@yosida95.com',
+    author_email='kohei@yosida95.com',
 
     packages=find_packages(),
     test_suite='tests',
