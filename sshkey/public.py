@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import abc
-import base64
 import enum
 import hashlib
 import struct
-
+from base64 import (
+    b64encode,
+    b64decode,
+)
 from textwrap import wrap
 
 
@@ -40,7 +42,7 @@ class SSHPublicKey(metaclass=abc.ABCMeta):
 
     def to_openssh(self):
         parts = [self.type.value,
-                 base64.b64encode(self._to_openssh_content()).decode('ascii')]
+                 b64encode(self._to_openssh_content()).decode('ascii')]
         if self.comment:
             parts.append(self.comment)
 
@@ -54,8 +56,8 @@ class SSHPublicKey(metaclass=abc.ABCMeta):
             comment += f', {self.comment}'
         rfc4716data.append(f'Comment: "{comment}"')
 
-        rfc4716data.extend(wrap(base64.b64encode(
-           self._to_openssh_content()).decode('ascii'), 70))
+        rfc4716data.extend(wrap(
+            b64encode(self._to_openssh_content()).decode('ascii'), 70))
 
         rfc4716data.append('---- END SSH2 PUBLIC KEY ----')
 
@@ -66,7 +68,7 @@ class SSHPublicKey(metaclass=abc.ABCMeta):
 
     def pretty_finger_print(self):
         fp = self.fingerprint()
-        return ':'.join(fp[i:i+2] for i in range(0, len(fp), 2))
+        return ':'.join(fp[i:i + 2] for i in range(0, len(fp), 2))
 
 
 class SSHRSAPublicKey(SSHPublicKey):
@@ -112,11 +114,11 @@ class SSHRSAPublicKey(SSHPublicKey):
         idx = 0
         parts = []
         while len(content) > idx:
-            length = struct.unpack('>l', content[idx:idx+4])[0]
+            length = struct.unpack('>l', content[idx:idx + 4])[0]
             idx += 4
 
-            parts.append(struct.unpack('>' + 'B' * length,
-                                       content[idx:idx+length]))
+            parts.append(
+                struct.unpack('>' + 'B' * length, content[idx:idx + length]))
             idx += length
 
         if len(parts) != 3:
@@ -192,11 +194,11 @@ class SSHDSAPublicKey(SSHPublicKey):
         idx = 0
         parts = []
         while len(content) > idx:
-            length = struct.unpack('>l', content[idx:idx+4])[0]
+            length = struct.unpack('>l', content[idx:idx + 4])[0]
             idx += 4
 
-            parts.append(struct.unpack('>' + 'B' * length,
-                                       content[idx:idx+length]))
+            parts.append(
+                struct.unpack('>' + 'B' * length, content[idx:idx + length]))
             idx += length
 
         if len(parts) != 5:
@@ -264,11 +266,11 @@ class SSHECDSAPublicKey(SSHPublicKey):
         idx = 0
         parts = []
         while len(content) > idx:
-            length = struct.unpack('>l', content[idx:idx+4])[0]
+            length = struct.unpack('>l', content[idx:idx + 4])[0]
             idx += 4
 
-            parts.append(struct.unpack('>' + 'B' * length,
-                                       content[idx:idx+length]))
+            parts.append(
+                struct.unpack('>' + 'B' * length, content[idx:idx + length]))
             idx += length
 
         if len(parts) != 3:
@@ -313,7 +315,7 @@ def from_openssh(marshaled):
     if len(parts) == 3:
         comment = parts[2].strip()
 
-    content = base64.b64decode(content_b64)
+    content = b64decode(content_b64)
     if algorithm == SSHKeyType.RSA.value:
         return SSHRSAPublicKey.from_openssh(content, comment)
     elif algorithm == SSHKeyType.DSA.value:
